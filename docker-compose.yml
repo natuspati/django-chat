@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    command:
+      - /bin/sh
+      - -c
+      - |
+        python manage.py flush --no-input
+        python manage.py migrate --no-input
+        python manage.py runserver 0.0.0.0:8000
+    env_file:
+      - backend/.env
+    depends_on:
+      - db
+      - redis
+
+    volumes:
+      - ./backend/:/backend/
+    ports:
+      - "8000:8000"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    environment:
+      - REACT_APP_WS_URL=ws://localhost:8000/ws/chat/
+    volumes:
+      - ./frontend/:/frontend
+      - /frontend/node_modules
+    ports:
+      - "3000:3000"
+
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+      - frontend
+
+  db:
+    image: postgres:latest
+    env_file:
+      - backend/.env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+
+  redis:
+    image: redis:7-alpine
+    command:
+      redis-server --maxmemory-policy allkeys-lru --maxmemory 512mb
+    expose:
+      - 6379
+    volumes:
+      - redis:/var/lib/redis/data/
+
+volumes:
+  redis:
+  postgres_data:
