@@ -166,7 +166,7 @@ Distributed under the MIT License. See [`LICENSE.txt`](LICENSE.txt) for more inf
 
 Nurlat Bekdullayev - [@natuspati](https://twitter.com/natuspati) - natuspati@gmail.com
 
-Project Link: [https://github.com/natuspati/country-guess-game](https://github.com/natuspati/django-chat)
+Project Link: [https://github.com/natuspati/django-chat](https://github.com/natuspati/django-chat)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

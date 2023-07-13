@@ -4,6 +4,6 @@ from core import routing
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('api.urls')),
+    path('api/', include('api.urls')),
     path('ws/', include(routing.websocket_urlpatterns)),
 ]
