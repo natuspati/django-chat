@@ -1,3 +1,4 @@
+from datetime import timedelta
 from pathlib import Path
 
 from environs import Env
@@ -13,7 +14,8 @@ SECRET_KEY = env.str('SECRET_KEY')
 
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', ['*'])
 
-CORS_ALLOWED_ORIGINS = env.list('CORS_ALLOWED_ORIGINS', ['http://localhost:3000'])
+CORS_ALLOWED_ORIGINS = env.list('CORS_ALLOWED_ORIGINS', ['http://localhost:3000', ])
+CORS_ALLOW_ALL_ORIGINS = True
 
 USE_DOCKER = env.bool('USE_DOCKER', True)
 
@@ -144,6 +146,20 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     )
+}
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
+    "REFRESH_TOKEN_LIFETIME": timedelta(weeks=1),
+    
+    "ALGORITHM": "HS256",
+    "SIGNING_KEY": SECRET_KEY,
+    
+    "AUTH_HEADER_TYPES": ("Bearer", "Token"),
+    
+    # "TOKEN_OBTAIN_SERIALIZER": "rest_framework_simplejwt.serializers.TokenObtainPairSerializer",
+    # Custom serializer to include username
+    "TOKEN_OBTAIN_SERIALIZER": "api.v1.users.serializers.TokenObtainPairWithUsernameSerializer",
 }
 
 SPECTACULAR_SETTINGS = {

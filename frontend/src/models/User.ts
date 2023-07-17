@@ -1,5 +1,6 @@
 export interface UserModel {
-  username: string;
-  token: string
+    username: string;
+    access: string;
+    refresh: string;
 }
   

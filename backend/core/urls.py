@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
-from core import routing
 
+from core import routing
 
 urlpatterns = [
     path('admin/', admin.site.urls),
