@@ -12,6 +12,7 @@ class AuthService {
             "http://127.0.0.1:8000/api/v1/users/token/",
             {username, password}
         );
+        console.log(response.data);
         if (!response.data.access) {
             return response.data;
         }

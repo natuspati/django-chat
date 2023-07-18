@@ -1,0 +1,572 @@
+openapi: 3.0.3
+info:
+  title: Django Chat API
+  version: 0.1.0
+  description: API for chat app build with Django channels
+paths:
+  /api/v1/conversations/:
+    get:
+      operationId: conversations_list
+      description: List conversations of requesting user
+      parameters:
+      - in: query
+        name: conversation
+        schema:
+          type: string
+        examples:
+          ConversationStringQuery:
+            value: conversation__user1__user2
+            summary: Valid Conversation string query
+      tags:
+      - conversations
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Conversation'
+              examples:
+                ValidOutputExample:
+                  value:
+                  - id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    name: conversation__user1_user2
+                    other_user:
+                      username: suarez
+                      name: Luis
+                    last_message:
+                      id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      conversation: 3fa85f64-5717-4562-b3fc-2c963f66afa
+                      from_user:
+                        username: zlatan
+                        name: Zlatan
+                      to_user:
+                        username: suarez
+                        name: Luis
+                      content: string
+                      timestamp: '2023-07-18T06:33:58.536Z'
+                      read: true
+                  summary: Valid putput example
+                  description: Example of Conversation list response
+          description: ''
+  /api/v1/conversations/{name}/:
+    get:
+      operationId: conversations_retrieve
+      description: Retrieve a conversation of requesting user and another user
+      parameters:
+      - in: path
+        name: name
+        schema:
+          type: string
+        required: true
+        examples:
+          ConversationName:
+            value: conversation__user1__user2
+            summary: Valid conversation name path variable
+      tags:
+      - conversations
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conversation'
+              examples:
+                ValidOutputExample:
+                  value:
+                    id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    name: conversation__user1_user2
+                    other_user:
+                      username: suarez
+                      name: Luis
+                    last_message:
+                      id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      conversation: 3fa85f64-5717-4562-b3fc-2c963f66afa
+                      from_user:
+                        username: zlatan
+                        name: Zlatan
+                      to_user:
+                        username: suarez
+                        name: Luis
+                      content: string
+                      timestamp: '2023-07-18T06:33:58.536Z'
+                      read: true
+                  summary: Valid putput example
+                  description: Example of Conversation list response
+          description: ''
+  /api/v1/messages/:
+    get:
+      operationId: messages_list
+      description: List messages between two users
+      parameters:
+      - in: query
+        name: conversation
+        schema:
+          type: string
+        examples:
+          ConversationStringQuery:
+            value: conversation__user1__user2
+            summary: Valid Conversation string query
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - messages
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedMessageList'
+              examples:
+                ValidOutputExample:
+                  value:
+                    count: 123
+                    next: http://api.example.org/accounts/?page=4
+                    previous: http://api.example.org/accounts/?page=2
+                    results:
+                    - id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      conversation: 9gh67f67-59837-4562-b3fc-2c963f66afa6
+                      from_user:
+                        username: zlatan
+                        name: Zlatan
+                      to_user:
+                        username: suarez
+                        name: Luis
+                      content: string
+                      timestamp: '2023-07-18T06:33:58.536Z'
+                      read: true
+                  summary: Valid putput example
+                  description: Example of message list response
+          description: ''
+  /api/v1/users/:
+    get:
+      operationId: users_list
+      tags:
+      - users
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Username'
+              examples:
+                ValidExample:
+                  value:
+                  - username: zlatan
+                    name: Zlatan
+                  summary: Valid example
+                  description: Example of a user with username
+          description: ''
+    post:
+      operationId: users_create
+      description: Register new user.
+      tags:
+      - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Register'
+            examples:
+              ValidInputExample:
+                value:
+                  username: zlatan
+                  email: zlatan@ibrahimovic.io
+                  name: Zlatan
+                  password: secureP@55word
+                  password2: secureP@55word
+                summary: Valid input example
+                description: Example of a user with valid email, strong password that
+                  matches
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Register'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Register'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenObtainPair'
+          description: ''
+  /api/v1/users/{username}/:
+    get:
+      operationId: users_retrieve
+      parameters:
+      - in: path
+        name: username
+        schema:
+          type: string
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+        required: true
+      tags:
+      - users
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Username'
+              examples:
+                ValidExample:
+                  value:
+                    username: zlatan
+                    name: Zlatan
+                  summary: Valid example
+                  description: Example of a user with username
+          description: ''
+    delete:
+      operationId: users_destroy
+      parameters:
+      - in: path
+        name: username
+        schema:
+          type: string
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+        required: true
+      tags:
+      - users
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/users/me/:
+    get:
+      operationId: users_me_retrieve
+      description: User data.
+      tags:
+      - users
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+              examples:
+                ValidExample:
+                  value:
+                    username: zlatan
+                    email: zlatan@ibrahimovic.io
+                    name: Zlatan
+                  summary: Valid example
+                  description: Example of a user with username and email
+          description: ''
+  /api/v1/users/token/:
+    post:
+      operationId: users_token_create
+      description: |-
+        Takes a set of user credentials and returns an access and refresh JSON web
+        token pair to prove the authentication of those credentials.
+      tags:
+      - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPairWithUsername'
+            examples:
+              ValidInputExample:
+                value:
+                  username: zlatan
+                  password2: secureP@55word
+                summary: Valid input example
+                description: Example of a user with valid email, strong password that
+                  matches
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPairWithUsername'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPairWithUsername'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenObtainPairWithUsername'
+              examples:
+                SuccessOutputExample:
+                  value:
+                    refresh: string
+                    access: string
+                    username: zlatan
+                  summary: Success output example
+                  description: Example of a successful login
+          description: ''
+  /api/v1/users/token/refresh/:
+    post:
+      operationId: users_token_refresh_create
+      description: |-
+        Takes a refresh type JSON web token and returns an access type JSON web
+        token if the refresh token is valid.
+      tags:
+      - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenRefresh'
+          description: ''
+  /api/v1/users/token/verify/:
+    post:
+      operationId: users_token_verify_create
+      description: |-
+        Takes a token and indicates if it is valid.  This view provides no
+        information about a token's fitness for a particular use.
+      tags:
+      - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenVerify'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenVerify'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenVerify'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenVerify'
+          description: ''
+components:
+  schemas:
+    Conversation:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          maxLength: 128
+        other_user:
+          type: string
+          readOnly: true
+        last_message:
+          type: string
+          readOnly: true
+      required:
+      - id
+      - last_message
+      - name
+      - other_user
+    Message:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        conversation:
+          type: string
+          readOnly: true
+        from_user:
+          type: string
+          readOnly: true
+        to_user:
+          type: string
+          readOnly: true
+        content:
+          type: string
+          maxLength: 512
+        timestamp:
+          type: string
+          format: date-time
+          readOnly: true
+        read:
+          type: boolean
+      required:
+      - content
+      - conversation
+      - from_user
+      - id
+      - timestamp
+      - to_user
+    PaginatedMessageList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Message'
+    Register:
+      type: object
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+        password:
+          type: string
+          writeOnly: true
+        password2:
+          type: string
+          writeOnly: true
+      required:
+      - email
+      - password
+      - password2
+      - username
+    TokenObtainPair:
+      type: object
+      properties:
+        username:
+          type: string
+          writeOnly: true
+        password:
+          type: string
+          writeOnly: true
+        access:
+          type: string
+          readOnly: true
+        refresh:
+          type: string
+          readOnly: true
+      required:
+      - access
+      - password
+      - refresh
+      - username
+    TokenObtainPairWithUsername:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+          writeOnly: true
+      required:
+      - password
+      - username
+    TokenRefresh:
+      type: object
+      properties:
+        access:
+          type: string
+          readOnly: true
+        refresh:
+          type: string
+          writeOnly: true
+      required:
+      - access
+      - refresh
+    TokenVerify:
+      type: object
+      properties:
+        token:
+          type: string
+          writeOnly: true
+      required:
+      - token
+    User:
+      type: object
+      properties:
+        username:
+          type: string
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        email:
+          type: string
+          format: email
+          title: Email address
+          maxLength: 254
+        name:
+          type: string
+          title: Name of User
+          maxLength: 255
+      required:
+      - username
+    Username:
+      type: object
+      properties:
+        username:
+          type: string
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        name:
+          type: string
+          title: Name of User
+          maxLength: 255
+      required:
+      - username
+  securitySchemes:
+    jwtAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

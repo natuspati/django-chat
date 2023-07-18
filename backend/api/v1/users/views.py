@@ -10,7 +10,6 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from drf_spectacular.utils import (
     extend_schema,
-    inline_serializer,
 )
 
 from api.v1.users.serializers import UserSerializer, RegisterSerializer, UsernameSerializer

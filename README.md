@@ -25,7 +25,7 @@
 <h3 align="center">Django Chat App</h3>
 
   <p align="center">
-    Simple chat app build with Django channels and React.
+    Live chat app build with asynchronous Django.
   </p>
 </div>
 
@@ -58,11 +58,17 @@
 
 ## About the Project
 
-Simple chat room, where a user types a username and can chat in a room.
+Chat app, where users can create conversations with other users.
 
-Django channels is used to send messages asynchronously. Channel redis is used to store messages circumventing
-costly database I/O operations.
+Chat is built using asynchronous code. Asynchronous Django channels powers conversations and notifications systems.
 
+Django supports async ORM since 4.1 and the app fully utilizes its functionality.
+
+For actions that require synchronous calls (nested serializers for instance) are wrapped
+inside async code.
+
+DRF Spectacular generates beautiful OpenAPI 3.0 schema, where each endpoint is decorated
+with custom detailed descriptions and examples.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -71,7 +77,7 @@ costly database I/O operations.
 Back-end is built with Django, Django Rest Framework and Django Channels. Dockerized PostgreSQL and Redis
 are spun up.
 
-Front-end is built with React.
+Front-end is built with React, React-router, React-dom and React-infinite-scroll.
 
 * [![Django][django.com]][Django-url]
 * [![Django Rest Framework][DjangoRestFrameWork.com]][DjangoRestFrameWork-url]
@@ -96,25 +102,25 @@ instructions: [Get Docker](https://docs.docker.com/get-docker/)
 ### Installation
 
 1. Clone the repo
-   ```sh
+   ```shell
    git clone https://github.com/natuspati/django-chat.git
    ```
 2. Spin up docker containers
-   ```sh
+   ```shell
    docker-compose up -d --build
    ```
 3. Migrate tables
-   ```sh
-   docker-compose exec backend python manage.py createmigrations
+   ```shell
+   docker-compose exec backend python manage.py makemigrations
    docker-compose exec backend python manage.py migrate
    ```
 4. Visit http://localhost/
 5. To stop the containers, run
    ```shell
-   docker-compose -f docker-compose.dev.yml down -v
+   docker-compose -f docker-compose.yml down -v
    ```
    Remove dangling images and volumes to reduce used storage
-   ```sh
+   ```shell
    docker image prune
    docker volume prune
    ```
@@ -125,11 +131,27 @@ instructions: [Get Docker](https://docs.docker.com/get-docker/)
 
 ## Usage
 
-User enters a username and is able to send texts in the room. You can test it by opening
-[localhost](localhost) on another browser.
+User sings in using username and password. Chats with all users is available. Active conversations with unread messages
+are displayed at the top.
+
+Authentication is performed using JWTs and stored in AuthContent.ts service.
+
+By clicking on a user, conversation opens up and only visible to the participants. Messages
+are sent using Django Channels, retrieved quickly using Redis and backed up in PostgreSQL database.
+
+You can check how message delivery works by opening the localhost from a different browser.
+
+Unread messages pop up in Navbar as a number besides Active Conversations.
+
+Publicly available user data includes usernames and names. Users themselves may see
+own email and reset password.
 
 <p float="left">
-  <img src=frontend/public/default.png alt="Default" width="800" >
+  <img src=frontend/public/Signin.png alt="Default" width="800" >
+<img src=frontend/public/Chats.png alt="Default" width="800" >
+<img src=frontend/public/Conversation_admin.png alt="Default" width="800" >
+<img src=frontend/public/Conversation_user.png alt="Default" width="800" >
+<img src=frontend/public/Active_conversations.png alt="Default" width="800" >
 </p>
 
 
@@ -145,7 +167,6 @@ User enters a username and is able to send texts in the room. You can test it by
 - [x] Configure front-end pipeline
 - [x] Add channel redis to hasten message I/O operations
 - [ ] Add tests to cover chat endpoints
-- [ ] Add authentication service
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -211,7 +232,7 @@ Thanks to these resources that helped me to build the game.
 
 [license-shield]: https://img.shields.io/github/license/natuspati/country-guess-game.svg?style=for-the-badge
 
-[license-url]: https://github.com/natuspati/country-guess-game/blob/main/LICENSE.txt
+[license-url]: https://github.com/natuspati/django-chat/blob/main/LICENSE.txt
 
 [React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
 
