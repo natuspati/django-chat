@@ -204,7 +204,7 @@ export function Chat() {
             {conversation && (
                 <div className="py-6">
                     <h3 className="text-3xl font-semibold text-gray-900">
-                        Chat with user: {conversation.other_user.username}
+                        Chat with user: {conversation.other_user.username}, name: {conversation.other_user?.name}
                     </h3>
                     <span className="text-sm">
             {conversation.other_user.username} is currently

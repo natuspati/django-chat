@@ -18,13 +18,13 @@ export function Message({message}: { message: MessageModel }) {
         <li
             className={classNames(
                 "mt-1 mb-1 flex",
-                user!.username === message.to_user ? "justify-start" : "justify-end"
+                user!.username === message.to_user.username ? "justify-start" : "justify-end"
             )}
         >
             <div
                 className={classNames(
                     "relative max-w-xl rounded-lg px-2 py-1 text-gray-700 shadow",
-                    user!.username === message.to_user ? "" : "bg-gray-100"
+                    user!.username === message.to_user.username ? "" : "bg-gray-100"
                 )}
             >
                 <div className="flex items-end">

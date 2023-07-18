@@ -199,6 +199,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
     def remove_user_from_conversation(self):
         return self.conversation.online.remove(self.user)
 
+
 class NotificationConsumer(AsyncJsonWebsocketConsumer):
     def __init__(self, *args, **kwargs):
         super().__init__(args, kwargs)

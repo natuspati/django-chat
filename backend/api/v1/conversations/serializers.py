@@ -4,7 +4,7 @@ from rest_framework import serializers
 
 from api.v1.messages.serializers import MessageSerializer
 from api.v1.models import Conversation
-from api.v1.users.serializers import UserSerializer
+from api.v1.users.serializers import UsernameSerializer
 
 User = get_user_model()
 
@@ -31,4 +31,5 @@ class ConversationSerializer(serializers.ModelSerializer):
             if username != self.context["user"].username:
                 # This is the other participant
                 other_user = User.objects.get(username=username)
-                return UserSerializer(other_user, context=context).data
+                return UsernameSerializer(other_user, context=context).data
+            

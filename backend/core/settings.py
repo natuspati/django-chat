@@ -14,7 +14,7 @@ SECRET_KEY = env.str('SECRET_KEY')
 
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', ['*'])
 
-CORS_ALLOWED_ORIGINS = env.list('CORS_ALLOWED_ORIGINS', ['http://localhost:3000', ])
+CORS_ALLOWED_ORIGINS = env.list('CORS_ALLOWED_ORIGINS', ['http://localhost:3000'])
 CORS_ALLOW_ALL_ORIGINS = True
 
 USE_DOCKER = env.bool('USE_DOCKER', True)
@@ -145,6 +145,9 @@ REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
     )
 }
 
@@ -167,6 +170,9 @@ SPECTACULAR_SETTINGS = {
     'DESCRIPTION': 'API for chat app build with Django channels',
     'VERSION': '0.1.0',
     'SERVE_INCLUDE_SCHEMA': False,
+    # 'SWAGGER_UI_DIST': 'SIDECAR',
+    # 'SWAGGER_UI_FAVICON_HREF': 'SIDECAR',
+    # 'REDOC_DIST': 'SIDECAR',
 }
 
 LOGGING = {
